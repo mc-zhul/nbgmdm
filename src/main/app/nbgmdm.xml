@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.6.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+	xmlns:ss="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/3.1/mule-spring-security.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+    <spring:beans>
+        <spring:import resource="applicationContext.xml" />
+        <spring:import resource="applicationContext-business.xml" />
+        <!-- mdm -->
+        <spring:bean id="PortCall" name="PortCall" class="com.hzmc.nbgmdm.web.PortCall"/>
+        
+    	<spring:bean id="TokenCall" name="TokenCall" class="com.hzmc.nbgmdm.web.TokenCall"/>
+    	<spring:bean id="TokenThread" name="TokenThread" class="com.hzmc.nbgmdm.service.thread.ThreadManager" init-method="start"/>
+    </spring:beans>
+    
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="nbg_mdm_esb-config" raml="nbgmdm.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <apikit:mapping-exception-strategy name="nbgmdmMapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+    <flow name="nbgmdmFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/mdcrud/*" doc:name="HTTP"/>
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+        <custom-filter class="com.hzmc.nbgmdm.util.CheckUserFilter" doc:name="CustomFilter"/>
+        <apikit:router config-ref="nbg_mdm_esb-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="nbgmdmMapping_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+     <flow name="get:/port:nbg_mdm_esb-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+        <component doc:name="Java">
+            <spring-object bean="PortCall"/>
+        </component>
+    </flow>
+    <flow name="get:/token:nbg_mdm_esb-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+        <component doc:name="Java">
+            <spring-object bean="TokenCall"/>
+        </component>
+    </flow>
+</mule>

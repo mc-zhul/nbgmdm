@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.6.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+	xmlns:ss="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/3.1/mule-spring-security.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+    <spring:beans>
+        <spring:import resource="applicationContext.xml" />
+<!--         <spring:import resource="applicationContext-business.xml" /> -->
+        
+        <spring:bean id="StationAllCall" name="StationAllCall" class="com.hzmc.hzbicycle.web.StationAllCall"/>
+        <spring:bean id="StationDetailCall" name="StationDetailCall" class="com.hzmc.hzbicycle.web.StationDetailCall"/>
+    </spring:beans>
+    
+    <http:listener-config name="HTTP_Listener_Configuration" host="127.0.0.1" port="8081" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="hz_bicycle_esb-config" raml="bicycle.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <apikit:mapping-exception-strategy name="hzbicycleMapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+    <flow name="hzbicycleFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/hzbicycle/*" doc:name="HTTP"/>
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+        <custom-filter class="com.hzmc.hzbicycle.util.CheckUserFilter" doc:name="CustomFilter"/>
+        <apikit:router config-ref="hz_bicycle_esb-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="hzbicycleMapping_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+     <flow name="get:/stationall:hz_bicycle_esb-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+        <component doc:name="Java">
+            <spring-object bean="StationAllCall"/>
+        </component>
+    </flow>
+    <flow name="get:/stationdetail:hz_bicycle_esb-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+        <component doc:name="Java">
+            <spring-object bean="StationDetailCall"/>
+        </component>
+    </flow>
+</mule>
