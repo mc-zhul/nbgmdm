@@ -13,7 +13,7 @@ public class ThreadManager {
 	GenerateManager generateManager;
 	
 	public void start(){
-		new DataThread(dataInitService).start();
-		new LogThread(generateManager).start();
+//		new DataThread(dataInitService).start();
+//		new LogThread(generateManager).start();
 	}
 }

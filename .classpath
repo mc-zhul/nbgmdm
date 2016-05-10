@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_79"/>
+	<classpathentry exported="true" kind="con" path="MULE_RUNTIME"/>
+	<classpathentry kind="src" path="src/main/app"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry kind="src" path="src/main/api"/>
+	<classpathentry kind="con" path="MULE_LIB/APIkit/org.mule.tooling.apikit.3.6.0"/>
+	<classpathentry kind="src" path="mappings"/>
+	<classpathentry kind="lib" path="lib/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="lib" path="lib/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.servicemix.bundles.commons-dbcp-1.4_3.jar"/>
+	<classpathentry kind="lib" path="lib/comm.jar"/>
+	<classpathentry kind="lib" path="lib/ezmorph-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/ibatis-2.3.4.726.jar"/>
+	<classpathentry kind="lib" path="lib/jasypt-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/jwebap_0.5.9.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.orm-3.1.0.M2.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

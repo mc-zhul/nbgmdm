@@ -1,6 +1,5 @@
 package com.hzmc.nbgmdm.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import net.sf.json.JSONArray;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.hzmc.nbgmdm.business.AuthorityManager;
 import com.hzmc.nbgmdm.business.BiManager;
-import com.hzmc.nbgmdm.domain.persistence.StationBean;
+import com.hzmc.nbgmdm.domain.persistence.PortBean;
 import com.hzmc.nbgmdm.service.BiService;
 
 @Service
@@ -24,11 +23,11 @@ public class BiServiceImpl implements BiService {
 	private AuthorityManager authorityManager;
 
 	@Override
-	public JSONObject getStation(String area, long user_id, long rows) {
+	public JSONObject getPort(long pagesize, long index) {
 		// 查询列表
-		List<StationBean> stationList = biManager.getStationAll(area, rows);
+		List<PortBean> portList = biManager.getPort(pagesize, index);
 		JSONObject reJson = new JSONObject();
-		JSONArray array = JSONArray.fromObject(stationList);
+		JSONArray array = JSONArray.fromObject(portList);
 		reJson.accumulate("count", array.size());
 		reJson.accumulate("list", array);
 

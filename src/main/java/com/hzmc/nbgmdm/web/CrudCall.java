@@ -12,7 +12,7 @@ import com.hzmc.nbgmdm.service.CallService;
  * @author ZhuLi
  *
  */
-public class PortCall implements Callable {
+public class CrudCall implements Callable {
 
 	@Autowired
 	private CallService callService;

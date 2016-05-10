@@ -32,7 +32,7 @@ public class CallServiceImpl implements CallService {
 
 
 	@Override
-	public JSONObject biCall(MuleEventContext eventContext, int type) {
+	public JSONObject mdCall(MuleEventContext eventContext, int type) {
 		JSONObject reJson = new JSONObject();
 		MuleMessage mes = eventContext.getMessage();
 		ParameterMap map = (ParameterMap) (mes.getPayload());
@@ -60,7 +60,7 @@ public class CallServiceImpl implements CallService {
 				fList = null;
 			}
 			if (null == fList || 0 == fList.size()) {
-				reJson.accumulate("0007", "没有接口权限");
+				reJson.accumulate("007", "没有接口权限");
 				result = "3";
 				can = false;
 			}
@@ -92,7 +92,7 @@ public class CallServiceImpl implements CallService {
 			case 1:
 				String area = map.get("area");
 				if (null != area && !"".equals(area)) {
-					reJson = biService.getStation(area, user_id, rows);
+					reJson = biService.getPort(user_id, rows);
 					result = "1";
 				} else {
 					reJson.accumulate("0001", "参数不全");
