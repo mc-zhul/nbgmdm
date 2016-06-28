@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.util;
+package com.hzmc.nbgsyn.util;
 
 import java.io.IOException;
 import java.io.InputStream;

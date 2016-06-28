@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.business.impl;
+package com.hzmc.nbgsyn.business.impl;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Blob;
@@ -9,17 +9,19 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.stereotype.Service;
 
-import com.hzmc.nbgmdm.business.GenerateManager;
-import com.hzmc.nbgmdm.domain.persistence.SearchLog;
-import com.hzmc.nbgmdm.util.ConnectionManager;
+import com.hzmc.nbgsyn.business.GenerateManager;
+import com.hzmc.nbgsyn.domain.persistence.SearchLog;
+import com.hzmc.nbgsyn.util.ConnectionManager;
 
 @Service
 public class GenerateManagerImpl implements GenerateManager {
 
 	@Override
-	public long checkAppkey(String appKey, String secret, String grant_type) {
+	public long checkUser(String appKey, String secret, String grant_type) {
 		Connection conn = ConnectionManager.getInstance().getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rslt = null;
@@ -99,6 +101,12 @@ public class GenerateManagerImpl implements GenerateManager {
 		} finally {
 			close(rs, ps, conn);
 		}
+	}
+
+	@Override
+	public void tansforData(JSONObject jo) {
+		
+		
 	}
 
 }

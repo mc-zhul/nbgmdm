@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.util;
+package com.hzmc.nbgsyn.util;
 
 
 import java.beans.PropertyVetoException;
@@ -25,7 +25,7 @@ public class BiConnectionManager {
 	private BiConnectionManager() {
 		try {
 			Property property = new Property();
-			property.getJDBCProperties("bi.properties");
+			property.getJDBCProperties("system.properties");
 			ds = new BasicDataSource();
 			ds.setDriverClassName(Property.driverClass);
 			ds.setUrl(Property.jdbcUrl);
@@ -61,7 +61,7 @@ public class BiConnectionManager {
 	 * @return instance
 	 */
 	public static final BiConnectionManager getInstance() {
-		if (instance == null) {
+		if (instance == null || instance.ds == null) {
 			try {
 				instance = new BiConnectionManager();
 			} catch (Exception e) {

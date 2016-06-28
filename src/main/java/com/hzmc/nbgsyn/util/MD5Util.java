@@ -7,7 +7,7 @@
  * 最近修改者：jinmq
  * 最近修改日期：2012-11-20
  */
-package com.hzmc.nbgmdm.util;
+package com.hzmc.nbgsyn.util;
 
 
 import java.io.BufferedReader;

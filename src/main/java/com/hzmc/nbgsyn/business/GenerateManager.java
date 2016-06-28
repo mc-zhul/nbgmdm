@@ -1,8 +1,10 @@
-package com.hzmc.nbgmdm.business;
+package com.hzmc.nbgsyn.business;
 
 import java.util.List;
 
-import com.hzmc.nbgmdm.domain.persistence.SearchLog;
+import net.sf.json.JSONObject;
+
+import com.hzmc.nbgsyn.domain.persistence.SearchLog;
 
 /**
  * 
@@ -17,11 +19,16 @@ public interface GenerateManager {
 	 * @param grant_type
 	 * @return
 	 */
-	public long checkAppkey(String appKey, String secret, String grant_type);
+	public long checkUser(String appKey, String secret, String grant_type);
 	
 	/**
 	 * 批量插入日志
 	 * @param list
 	 */
 	public void insertLog(List<SearchLog> list);
+	
+	/**
+	 * 同步数据
+	 */
+	public void tansforData(JSONObject jo);
 }

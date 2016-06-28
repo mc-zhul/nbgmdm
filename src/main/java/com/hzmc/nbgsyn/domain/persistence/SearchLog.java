@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.domain.persistence;
+package com.hzmc.nbgsyn.domain.persistence;
 
 import java.util.Date;
 

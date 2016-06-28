@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.business.impl;
+package com.hzmc.nbgsyn.business.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.hzmc.nbgmdm.business.AuthorityManager;
-import com.hzmc.nbgmdm.domain.persistence.UserAuthorityBean;
-import com.hzmc.nbgmdm.util.ConnectionManager;
+import com.hzmc.nbgsyn.business.AuthorityManager;
+import com.hzmc.nbgsyn.domain.persistence.UserAuthorityBean;
+import com.hzmc.nbgsyn.util.ConnectionManager;
 
 @Repository
 public class AuthorityManagerImpl implements AuthorityManager {

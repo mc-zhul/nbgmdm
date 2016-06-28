@@ -1,162 +1,212 @@
-package com.hzmc.nbgmdm.service.impl;
+package com.hzmc.nbgsyn.service.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.mule.api.MuleEventContext;
 import org.mule.api.MuleMessage;
 import org.mule.module.http.internal.ParameterMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hzmc.nbgmdm.service.BiService;
-import com.hzmc.nbgmdm.service.CallService;
-import com.hzmc.nbgmdm.service.LogService;
-import com.hzmc.nbgmdm.service.TokenData;
-import com.hzmc.nbgmdm.util.AuthorityUtil;
+import com.google.gson.JsonObject;
+import com.hzmc.nbgsyn.business.RegisterManager;
+import com.hzmc.nbgsyn.domain.persistence.RegisterBean;
+import com.hzmc.nbgsyn.service.CallService;
+import com.hzmc.nbgsyn.service.LogService;
+import com.hzmc.nbgsyn.service.TalendService;
+import com.hzmc.nbgsyn.util.DataSyncManager;
 
 @Service
 public class CallServiceImpl implements CallService {
 
 	@Autowired
-	private BiService biService;
+	private RegisterManager registerManager;
 	@Autowired
 	private LogService logservice;
-	private static SimpleDateFormat sFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-	private static boolean isSave;
+	@Autowired
+	private TalendService talendService;
+	private static final Logger logger = Logger
+			.getLogger(CallServiceImpl.class);
 
+	// private static SimpleDateFormat sFormat = new
+	// SimpleDateFormat("yyyyMMddHHmmss");
 
 	@Override
-	public JSONObject mdCall(MuleEventContext eventContext, int type) {
+	public JSONObject register(MuleEventContext eventContext) {
 		JSONObject reJson = new JSONObject();
 		MuleMessage mes = eventContext.getMessage();
 		ParameterMap map = (ParameterMap) (mes.getPayload());
-		long user_id = mes.getOutboundProperty("user_id");
-		String time = map.get("time");
-		String net_uid = map.get("net_uid");
-		boolean can = true;
-		String result = "0";// 查询状态
-		// 判断权限
-		List<String> cList = null;// 没有权限的字段
-		List<String> fList;// 有权限的字段
-		if (user_id < 0) {
-			reJson.accumulate("0009", "用户不存在");
-			result = "2";
-			can = false;
-		} else {
-			Map<Long, List<String>> fMap = TokenData.fauthMap.get(user_id);
-			Map<Long, List<String>> cMap = TokenData.authMap.get(user_id);
-			if (null != cMap) {
-				cList = cMap.get(Long.valueOf(type));
-			}
-			if (null != fMap) {
-				fList = fMap.get(Long.valueOf(type));
-			} else {
-				fList = null;
-			}
-			if (null == fList || 0 == fList.size()) {
-				reJson.accumulate("007", "没有接口权限");
-				result = "3";
-				can = false;
-			}
+		String str = map.get("jsonstr").trim();
+		JSONObject jo = JSONObject.fromObject(str);
+		JSONObject data = JSONObject.fromObject(jo.get("applyData"));
+		String type = String.valueOf(jo.get("type"));
+		RegisterBean rb = new RegisterBean();
+		rb.setMd_code(data.getString("MD_CODE"));
+		rb.setSys_code(data.getString("SYS_CODE"));
+		rb.setInterface_code(data.getString("INTERFACE_CODE"));
+		rb.setService_url(data.getString("SERVICE_URL"));
+		rb.setUsername(data.getString("username"));
+		rb.setPassword(data.getString("password"));
+		switch (type) {
+		case "C":
+			registerManager.registerC(rb);
+			break;
+		case "D":
+			registerManager.registerD(rb);
+			break;
+		case "U":
+			registerManager.registerU(rb);
+			break;
+		default:
+			break;
 		}
-		// 获取时间权限
-		long timeP = 0;
-		try {
-			timeP = TokenData.timeMap.get(user_id).get(Long.valueOf(type));
-		} catch (Exception e1) {
-			timeP = 0;
-		}
-		long r = logservice.checkPeriodFromCache(user_id, type, time);
-		if (6 != type && 1 != type && r < 0) {
-			reJson.accumulate("0004", "时间权限不足");
-			result = "3";
-			can = false;
-		}
-		long rows = TokenData.rows;
-		try {
-			rows = Long.valueOf(map.get("rows"));
-		} catch (Exception e) {
-			// e.printStackTrace();
-		}
-		// 日志信息
 
-		long start = new Date().getTime();
-		if (can) {
-			switch (type) {
-			case 1:
-				String area = map.get("area");
-				if (null != area && !"".equals(area)) {
-					reJson = biService.getPort(user_id, rows);
-					result = "1";
-				} else {
-					reJson.accumulate("0001", "参数不全");
-				}
-
-				break;
-			
-			default:
-				break;
-			}
-		}
-		long end = new Date().getTime();
-		long cost = end - start;
-		// 插入日志
-		AuthorityUtil.coulumfilter(reJson, cList);
-		String re = reJson.toString();
-		logservice.insertLog(user_id, type, cost, timeP, result, map.entrySet().toString(), re);
-		
 		return reJson;
 
 	}
 
-	/**
-	 * 時間權限的確定
-	 * 
-	 * @param timeperiod
-	 * @param startTime
-	 * @return
-	 */
-	private boolean checkStartTime(long timeperiod, String startTime) {
-		// 时间空的不在这里判断
-		if (null == startTime) {
-			return true;
+	@Override
+	public JSONObject token(MuleEventContext eventContext) {
+		return null;
+	}
+
+	@Override
+	public JSONObject transforToTalend(MuleEventContext eventContext) {
+		MuleMessage mes = eventContext.getMessage();
+		ParameterMap map = (ParameterMap) (mes.getPayload());
+		// dbCall(eventContext);
+
+		String str = map.get("jsonstr");
+		JSONObject jo = JSONObject.fromObject(str);
+
+		String data = String.valueOf(jo.get("applyData"));
+		String operand = String.valueOf(jo.get("operand"));
+		String type = String.valueOf(jo.get("type"));
+		String root = String.valueOf(jo.get("root"));
+		JSONObject j = null;
+		j = toTalend(root, type, operand, operand, data);
+		// dbCall(eventContext);
+		//
+		// RegisterBean rb = new RegisterBean();
+		// rb.setInterface_code(operand);
+		// List<RegisterBean> rgList = registerManager.registerList(rb);
+		// for(RegisterBean rbs : rgList){
+		// String serviceUrl = rbs.getService_url();
+		// String un = rbs.getUsername();
+		// String pw = rbs.getPassword();
+		// JSONObject jo1 = new JSONObject();
+		// //
+		// jo1.accumulate("operand",operand);
+		// jo1.accumulate("type",type);
+		// jo1.accumulate("username",un);
+		// jo1.accumulate("password",pw);
+		// jo1.accumulate("applyData", data);
+		// String url = "";
+		// url = serviceUrl + "?jsonstr={" + data + "}";
+		// HttpClient client = new HttpClient();
+		// HttpMethod method = new GetMethod(url);
+		// try {
+		// client.executeMethod(method);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// }
+
+		return j;
+	}
+
+	@Override
+	public JSONObject dbCall(MuleEventContext eventContext) {
+		MuleMessage mes = eventContext.getMessage();
+		ParameterMap map = (ParameterMap) (mes.getPayload());
+		String str = map.get("jsonstr").trim();
+		DataSyncManager dsm = new DataSyncManager();
+		// 
+		String r = dsm.dataSync(str);
+
+		return JSONObject.fromObject(r);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public JSONObject toTalend(String rt, String type, String model, String cluster, String data) {
+		//生成entity
+		Element root = DocumentHelper.createElement(rt);
+		Document document = DocumentHelper.createDocument(root);
+//		JSONArray ja = JSONArray.fromObject(data);
+//		try {
+//			Collection<?> joList = JSONArray.toCollection(ja);
+//			Object[] oList = joList.toArray();
+//			System.out.println(oList.length);
+//			for(Object o :oList){
+//				
+//				JSONObject jo = JSONObject.fromObject(o);
+//				Iterator it = jo.keys();
+//				while (it.hasNext()) {
+//					String k = it.next().toString();
+//					root.addElement(k).addText(jo.getString(k));
+//				}
+//				System.out.println(o);
+//			}
+//				
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		
+		JSONObject jo = JSONObject.fromObject(data);
+		Iterator it = jo.keys();
+		while (it.hasNext()) {
+			String k = it.next().toString();
+			root.addElement(k).addText(jo.getString(k));
 		}
-		long now = new Date().getTime();
-		long p = 0;
-		long min = 60 * 1000;
-		long start = 0;
-		if (0 == timeperiod) {
-			p = now;
-		} else if (5 == timeperiod) {
-			p = now - 5 * min;
-		} else if (10 == timeperiod) {
-			p = now - 10 * min;
-		} else if (30 == timeperiod) {
-			p = now - 30 * min;
-		} else if (60 == timeperiod) {
-			p = now - 60 * min;
-		} else if (24 == timeperiod) {
-			p = now - 24 * 60 * min;
-		} else if (7 == timeperiod) {
-			p = now - 7 * 24 * 60 * min;
-		} else if (365 == timeperiod) {
-			p = now - 365 * 24 * 60 * min;
+		String text = document.getRootElement().asXML();
+		JSONObject j = new JSONObject();
+		if ("U".equals(type)) {
+			j = talendService.talendWS(type, model, cluster, text);
+		} else if ("C".equals(type)) {
+			j = talendService.talendWS(type, model, cluster, text);
 		}
+		logger.info("talend 同步数据，model：" + model + "操作类型：" + type + ",data:"
+				+ data);
+		return j;
+	}
+
+	@Override
+	public JSONObject talendCall(String type, String model, String cluster,
+			String xmls) {
+		return null;
+	}
+
+	@Override
+	public JSONObject transData(String jsonstr) {
+		String serviceUrl = "http://localhost:8082/nbgsyn/trans";
+		GetMethod method = null;
 		try {
-			start = sFormat.parse(startTime).getTime();
-		} catch (ParseException e) {
+			String url = "/nbgsyn/trans";
+			String host = "127.0.0.1";
+			jsonstr = URLEncoder.encode(jsonstr, "utf-8");
+			String param = "jsonstr=" + jsonstr;
+			HttpClient httpClient = new HttpClient();
+			httpClient.getHostConfiguration().setHost(host, 8082, "http");
+			method = new GetMethod(url + "?" + param);
+			httpClient.executeMethod(method);
+		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			method.releaseConnection();
 		}
-		if (p > start) {
-			return false;
-		} else {
-			return true;
-		}
+
+		return null;
 	}
 }

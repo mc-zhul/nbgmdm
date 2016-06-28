@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.util;
+package com.hzmc.nbgsyn.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;

@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.util;
+package com.hzmc.nbgsyn.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

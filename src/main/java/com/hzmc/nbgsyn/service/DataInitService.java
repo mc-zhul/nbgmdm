@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.service;
+package com.hzmc.nbgsyn.service;
 
 public interface DataInitService {
 	/**

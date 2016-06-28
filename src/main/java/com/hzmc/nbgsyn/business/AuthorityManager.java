@@ -1,8 +1,8 @@
-package com.hzmc.nbgmdm.business;
+package com.hzmc.nbgsyn.business;
 
 import java.util.List;
 
-import com.hzmc.nbgmdm.domain.persistence.UserAuthorityBean;
+import com.hzmc.nbgsyn.domain.persistence.UserAuthorityBean;
 
 public interface AuthorityManager {
 	

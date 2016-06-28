@@ -1,1 +1,13 @@
+/applicationContext-business.xml
+/applicationContext-propertyConfigurer.xml
+/applicationContext.xml
 /com/
+/entity.properties
+/index.html
+/log4j.properties
+/main/
+/mule-app.properties
+/mule-deploy.properties
+/nbgMdmSyn.xml
+/nbgsyn.raml
+/system.properties

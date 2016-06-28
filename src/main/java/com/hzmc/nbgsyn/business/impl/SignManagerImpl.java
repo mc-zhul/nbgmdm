@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.business.impl;
+package com.hzmc.nbgsyn.business.impl;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -10,8 +10,9 @@ import java.util.LinkedHashMap;
 
 
 
-import com.hzmc.nbgmdm.business.SignManager;
-import com.hzmc.nbgmdm.util.MD5Util;
+
+import com.hzmc.nbgsyn.business.SignManager;
+import com.hzmc.nbgsyn.util.MD5Util;
 
 public class SignManagerImpl implements SignManager {
 

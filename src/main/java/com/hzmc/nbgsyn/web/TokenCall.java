@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.web;
+package com.hzmc.nbgsyn.web;
 
 import net.sf.json.JSONObject;
 

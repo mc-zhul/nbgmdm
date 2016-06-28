@@ -11,54 +11,28 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <spring:beans>
         <spring:import resource="applicationContext.xml"/>
         <spring:import resource="applicationContext-business.xml"/>
-        <spring:bean id="PortCall" name="PortCall" class="com.hzmc.nbgmdm.web.PortCall"/>
-        <spring:bean id="TokenCall" name="TokenCall" class="com.hzmc.nbgmdm.web.TokenCall"/>
-        <spring:bean id="CrudCall" name="CrudCall" class="com.hzmc.nbgmdm.web.CrudCall"/>
+        <spring:bean id="TokenCall" name="TokenCall" class="com.hzmc.nbgsyn.web.TokenCall"/>
+        <spring:bean id="CrudCall" name="CrudCall" class="com.hzmc.nbgsyn.web.CrudCall"/>
+        <spring:bean id="TransCall" name="TransCall" class="com.hzmc.nbgsyn.web.TransCall"/>
         
-        <spring:bean id="TokenThread" name="TokenThread" class="com.hzmc.nbgmdm.service.thread.ThreadManager" init-method="start"/>
     </spring:beans>
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8082" doc:name="HTTP Listener Configuration"/>
-    <apikit:config name="nbg_mdm_esb-config" raml="nbgmdm.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
-    <jdbc-ee:oracle-data-source name="Oracle_NBG" user="nbgmdm" password="nbgmdm" url="jdbc:oracle:thin:@172.16.4.118:1578/capaa" transactionIsolation="UNSPECIFIED" doc:name="Oracle Data Source"/>
-    <jdbc-ee:connector name="Database_nbg" dataSource-ref="Oracle_NBG" validateConnections="true" queryTimeout="-1" pollingFrequency="0" doc:name="Database"/>
-    <db:oracle-config name="Oracle_Configuration" host="172.16.4.118" port="1578" instance="capaa" user="nbgmdm" password="nbgmdm" doc:name="Oracle Configuration"/>
-    <apikit:config name="Router" raml="nbgmdm.raml" consoleEnabled="true" consolePath="console" doc:name="Router">
-        <apikit:flow-mapping resource="mdm1" action="get" flow-ref="get:/port:nbg_mdm_esb-config"/>
-        <apikit:flow-mapping resource="/addport" action="post" flow-ref="nbgmdm_port_insert"/>
+    <apikit:config name="nbg_mdm_esb-config" raml="nbgsyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <apikit:config name="Router" raml="nbgsyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router">
     </apikit:config>
-    <db:template-query name="port_insert" doc:name="Template Query">
-        <db:parameterized-query><![CDATA[insert into md_location_port t(t.port_id,t.port_code) 
-values(#[message.inboundProperties[‘port_id’]],#[message.inboundProperties[‘port_code’]]);]]></db:parameterized-query>
-    </db:template-query>
-    <apikit:mapping-exception-strategy name="nbgmdmMapping_Exception_Strategy">
+    <apikit:mapping-exception-strategy name="nbgsynMapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
             <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
             <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
-    <flow name="nbgmdmFlow">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/mdcrud/*" doc:name="HTTP"/>
+    <flow name="nbgsynFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/nbgsyn/*" doc:name="HTTP"/>
         <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
-        <custom-filter class="com.hzmc.nbgmdm.util.CheckUserFilter" doc:name="CustomFilter"/>
+        <custom-filter class="com.hzmc.nbgsyn.util.CheckUserFilter" doc:name="CustomFilter"/>
         <apikit:router config-ref="nbg_mdm_esb-config" doc:name="APIkit Router"/>
-        <exception-strategy ref="nbgmdmMapping_Exception_Strategy" doc:name="Reference Exception Strategy"/>
-    </flow>
-    <flow name="nbgmdmFlow1">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/mdm" doc:name="HTTP"/>
-        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
-        <apikit:router config-ref="Router" doc:name="APIkit Router"/>
-        <db:select config-ref="Oracle_Configuration" doc:name="Database">
-            <db:parameterized-query><![CDATA[select port_code,port_cname from md_location_port where rownum<20]]></db:parameterized-query>
-        </db:select>
-        <json:object-to-json-transformer encoding="UTF-8" mimeType="text/plain" doc:name="Object to JSON"/>
-    </flow>
-    <flow name="nbgmdm_port_insert">
-        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
-        <db:insert config-ref="Oracle_Configuration" doc:name="Database">
-            <db:template-query-ref name="port_insert"/>
-        </db:insert>
-        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <exception-strategy ref="nbgsynMapping_Exception_Strategy" doc:name="Reference Exception Strategy"/>
     </flow>
      <flow name="get:/crud:nbg_mdm_esb-config">
         <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
@@ -66,10 +40,10 @@ values(#[message.inboundProperties[‘port_id’]],#[message.inboundProperties[�
             <spring-object bean="CrudCall"/>
         </component>
     </flow>
-    <flow name="get:/port:nbg_mdm_esb-config">
+    <flow name="get:/trans:nbg_mdm_esb-config">
         <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
         <component doc:name="Java">
-            <spring-object bean="PortCall"/>
+            <spring-object bean="TransCall"/>
         </component>
     </flow>
     <flow name="get:/token:nbg_mdm_esb-config">

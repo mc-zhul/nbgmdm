@@ -1,11 +1,11 @@
-package com.hzmc.nbgmdm.service;
+package com.hzmc.nbgsyn.service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.hzmc.nbgmdm.domain.persistence.SearchLog;
+import com.hzmc.nbgsyn.domain.persistence.SearchLog;
 
 
 public class TokenData {

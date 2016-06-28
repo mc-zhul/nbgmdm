@@ -1,10 +1,10 @@
-package com.hzmc.nbgmdm.service.thread;
+package com.hzmc.nbgsyn.service.thread;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.hzmc.nbgmdm.business.GenerateManager;
-import com.hzmc.nbgmdm.service.DataInitService;
+import com.hzmc.nbgsyn.business.GenerateManager;
+import com.hzmc.nbgsyn.service.DataInitService;
 
 public class ThreadManager {
 	@Autowired

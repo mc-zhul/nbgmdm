@@ -1,0 +1,141 @@
+#%RAML 0.8
+---
+title: nbg_mdm_esb API
+version: v1.0
+baseUri: http://nbg_mdm_es/api
+mediaType: application/json
+schemas:
+  - getport: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "string"
+          },
+          "cost" : {
+            "type" : "integer"
+          }
+        }      
+      }    
+  - gettoken: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "string"
+          },
+          "cost" : {
+            "type" : "integer"
+          }
+        }      
+      }
+  - getcrud: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "string"
+          },
+          "cost" : {
+            "type" : "string"
+          }
+        }      
+      }  
+  - gettrans: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "string"
+          },
+          "cost" : {
+            "type" : "string"
+          }
+        }      
+      }    
+documentation:
+  - title: Introduction
+    content: |
+      API to manage the .
+resourceTypes: 
+  - base:
+      get:
+        responses:
+          200:
+            body:
+              schema: get<<resourcePathName>> # e.g. get-auth
+  - collection:
+      description: Collection of available <<resourcePathName>>.
+      get:
+      post:
+traits:
+  - searchable:
+      queryParameters:
+        query:
+          description: |
+            JSON  {"field1":"value1",...,"fieldN":"valueN"} <<description>>
+          example: |
+            <<example>>
+/port:
+  type: base
+  get:
+    is: [searchable: {description: "with valid searchable fields: pname", example: "{\"pname\": \"wang\"}"}]
+    description: |
+          全部站点.
+    responses:
+      200:
+        body:
+          example: |
+            {
+              "day" : "2",
+              "cost" : 100
+            }
+/token:
+  type: base
+  get:
+    is: [searchable: {description: "with valid searchable fields: pname", example: "{\"pname\": \"wang\",\"pnam1e\": \"wang\"}"}]
+    description: getlist
+    responses:
+      200:
+        body:
+          example: |
+            {
+              "day" : "2",
+              "cost" : 100
+            }
+/crud:
+  type: base
+  post:
+    description: abc
+    body:
+     application/json:
+                example: |
+                  { "sa": "asdasdfa" }
+    responses:
+      200:
+        body:
+          example: |
+            {
+              "day" : "2",
+              "cost" : 100
+            }
+/trans:
+  type: base
+  post:
+    description: abc
+    body:
+     application/json:
+                example: |
+                  { "sa": "asdasdfa" }
+    responses:
+      200:
+        body:
+          example: |
+            {
+              "day" : "2",
+              "cost" : 100
+            }

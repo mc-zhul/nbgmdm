@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.service.impl;
+package com.hzmc.nbgsyn.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hzmc.nbgmdm.business.AuthorityManager;
-import com.hzmc.nbgmdm.domain.persistence.UserAuthorityBean;
-import com.hzmc.nbgmdm.service.DataInitService;
-import com.hzmc.nbgmdm.service.TokenData;
+import com.hzmc.nbgsyn.business.AuthorityManager;
+import com.hzmc.nbgsyn.domain.persistence.UserAuthorityBean;
+import com.hzmc.nbgsyn.service.DataInitService;
+import com.hzmc.nbgsyn.service.TokenData;
 
 @Service
 public class DataInitServiceImpl implements DataInitService {

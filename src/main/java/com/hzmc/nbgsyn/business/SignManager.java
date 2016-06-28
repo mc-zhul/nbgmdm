@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.business;
+package com.hzmc.nbgsyn.business;
 
 import java.util.LinkedHashMap;
 

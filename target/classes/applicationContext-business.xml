@@ -17,7 +17,7 @@
 	<context:annotation-config/>
 <!-- 	<tx:annotation-driven transaction-manager="transactionManager"/> -->
 	
-	<context:component-scan base-package="com.hzmc.nbgmdm.business" />
-	<context:component-scan base-package="com.hzmc.nbgmdm.service" />
+	<context:component-scan base-package="com.hzmc.nbgsyn.business" />
+	<context:component-scan base-package="com.hzmc.nbgsyn.service" />
 	
 </beans>

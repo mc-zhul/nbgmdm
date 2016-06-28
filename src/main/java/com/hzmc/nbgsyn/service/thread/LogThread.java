@@ -1,4 +1,4 @@
-package com.hzmc.nbgmdm.service.thread;
+package com.hzmc.nbgsyn.service.thread;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import com.hzmc.nbgmdm.business.GenerateManager;
-import com.hzmc.nbgmdm.domain.persistence.SearchLog;
-import com.hzmc.nbgmdm.service.TokenData;
+import com.hzmc.nbgsyn.business.GenerateManager;
+import com.hzmc.nbgsyn.domain.persistence.SearchLog;
+import com.hzmc.nbgsyn.service.TokenData;
 
 public class LogThread extends Thread {
 

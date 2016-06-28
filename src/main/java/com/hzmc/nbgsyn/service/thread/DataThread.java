@@ -1,7 +1,7 @@
-package com.hzmc.nbgmdm.service.thread;
+package com.hzmc.nbgsyn.service.thread;
 
 
-import com.hzmc.nbgmdm.service.DataInitService;
+import com.hzmc.nbgsyn.service.DataInitService;
 
 public class DataThread extends Thread {
 

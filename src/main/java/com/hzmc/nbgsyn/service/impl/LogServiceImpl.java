@@ -1,14 +1,14 @@
-package com.hzmc.nbgmdm.service.impl;
+package com.hzmc.nbgsyn.service.impl;
 
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hzmc.nbgmdm.business.GenerateManager;
-import com.hzmc.nbgmdm.domain.persistence.SearchLog;
-import com.hzmc.nbgmdm.service.LogService;
-import com.hzmc.nbgmdm.service.TokenData;
+import com.hzmc.nbgsyn.business.GenerateManager;
+import com.hzmc.nbgsyn.domain.persistence.SearchLog;
+import com.hzmc.nbgsyn.service.LogService;
+import com.hzmc.nbgsyn.service.TokenData;
 
 @Service
 public class LogServiceImpl implements LogService {
