@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" version="EE-3.6.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.6.1" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd
@@ -9,47 +8,53 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <spring:beans>
-        <spring:import resource="applicationContext.xml"/>
-        <spring:import resource="applicationContext-business.xml"/>
-        <spring:bean id="TokenCall" name="TokenCall" class="com.hzmc.nbgsyn.web.TokenCall"/>
-        <spring:bean id="CrudCall" name="CrudCall" class="com.hzmc.nbgsyn.web.CrudCall"/>
-        <spring:bean id="TransCall" name="TransCall" class="com.hzmc.nbgsyn.web.TransCall"/>
-        
+        <spring:import resource="applicationContext.xml" />
+        <spring:import resource="applicationContext-business.xml" />
+        <spring:bean id="TokenCall" name="TokenCall" class="com.hzmc.nbgsyn.web.TokenCall" />
+        <spring:bean id="CrudCall" name="CrudCall" class="com.hzmc.nbgsyn.web.CrudCall" />
+        <spring:bean id="TransCall" name="TransCall" class="com.hzmc.nbgsyn.web.TransCall" />
     </spring:beans>
-    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8082" doc:name="HTTP Listener Configuration"/>
-    <apikit:config name="nbg_mdm_esb-config" raml="nbgsyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
-    <apikit:config name="Router" raml="nbgsyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8082" doc:name="HTTP Listener Configuration" />
+    <apikit:config name="nbg_mdm_esb-config" raml="nbgMdmSyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router" >
+        <apikit:flow-mapping resource="/crud" action="get" flow-ref="getAndPost:/crud:nbg_mdm_esb-config"/>
+        <apikit:flow-mapping resource="/crud" action="post" flow-ref="getAndPost:/crud:nbg_mdm_esb-config"/>
+        <apikit:flow-mapping resource="/trans" action="get" flow-ref="getAndPost:/trans:nbg_mdm_esb-config"/>
+        <apikit:flow-mapping resource="/trans" action="post" flow-ref="getAndPost:/trans:nbg_mdm_esb-config"/>
+        <apikit:flow-mapping resource="/token" action="get" flow-ref="getAndPost:/token:nbg_mdm_esb-config"/>
+        <apikit:flow-mapping resource="/token" action="post" flow-ref="getAndPost:/token:nbg_mdm_esb-config"/>
     </apikit:config>
+    <apikit:config name="Router" raml="nbgMdmSyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
     <apikit:mapping-exception-strategy name="nbgsynMapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
-            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
     <flow name="nbgsynFlow">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/nbgsyn/*" doc:name="HTTP"/>
-        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
-        <custom-filter class="com.hzmc.nbgsyn.util.CheckUserFilter" doc:name="CustomFilter"/>
-        <apikit:router config-ref="nbg_mdm_esb-config" doc:name="APIkit Router"/>
-        <exception-strategy ref="nbgsynMapping_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/nbgsyn/v1.0/*" doc:name="HTTP" />
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload" />
+        <custom-filter class="com.hzmc.nbgsyn.util.CheckUserFilter" doc:name="CustomFilter" />
+        <apikit:router config-ref="nbg_mdm_esb-config" doc:name="APIkit Router" />
+        <exception-strategy ref="nbgsynMapping_Exception_Strategy" doc:name="Reference Exception Strategy" />
     </flow>
-     <flow name="get:/crud:nbg_mdm_esb-config">
-        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+    <flow name="getAndPost:/crud:nbg_mdm_esb-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload" />
         <component doc:name="Java">
-            <spring-object bean="CrudCall"/>
+            <spring-object bean="CrudCall" />
         </component>
     </flow>
-    <flow name="get:/trans:nbg_mdm_esb-config">
-        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+    <flow name="getAndPost:/trans:nbg_mdm_esb-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload" />
         <component doc:name="Java">
-            <spring-object bean="TransCall"/>
+            <spring-object bean="TransCall" />
         </component>
     </flow>
-    <flow name="get:/token:nbg_mdm_esb-config">
-        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
+    <flow name="getAndPost:/token:nbg_mdm_esb-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload" />
         <component doc:name="Java">
-            <spring-object bean="TokenCall"/>
+            <spring-object bean="TokenCall" />
         </component>
     </flow>
+
 </mule>
