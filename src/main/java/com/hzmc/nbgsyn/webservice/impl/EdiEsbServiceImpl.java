@@ -1,9 +1,7 @@
 package com.hzmc.nbgsyn.webservice.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jws.WebService;
 
@@ -13,12 +11,11 @@ import net.sf.json.JSONSerializer;
 import net.sf.json.JsonConfig;
 
 import org.apache.log4j.Logger;
-import org.mortbay.util.ajax.JSONObjectConvertor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hzmc.nbgsyn.business.IUserManager;
 import com.hzmc.nbgsyn.business.enums.MsgEnum;
 import com.hzmc.nbgsyn.business.exception.UserInfoException;
-import com.hzmc.nbgsyn.business.impl.UserManagerImpl;
 import com.hzmc.nbgsyn.domain.persistence.ApplyDate;
 import com.hzmc.nbgsyn.domain.persistence.ResultBean;
 import com.hzmc.nbgsyn.domain.persistence.UserInfoBean;
@@ -32,7 +29,8 @@ import com.hzmc.nbgsyn.webservice.EdiEsbService;
 @WebService(endpointInterface = "com.hzmc.service.EdiEsbService", serviceName = "EdiEsbService")
 public class EdiEsbServiceImpl implements EdiEsbService {
 
-	private IUserManager userManager = new UserManagerImpl();
+	@Autowired
+	private IUserManager userManager;
 
 	private Logger logger = Logger.getLogger(EdiEsbServiceImpl.class);
 
