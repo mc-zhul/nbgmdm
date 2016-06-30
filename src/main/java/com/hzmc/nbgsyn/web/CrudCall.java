@@ -33,6 +33,7 @@ public class CrudCall implements Callable {
 			MuleMessage mes = eventContext.getMessage();
 			ParameterMap map = (ParameterMap) (mes.getPayload());
 			String str = map.get("jsonstr").trim();
+			System.out.println(str);
 			jo = JSONObject.fromObject(str);
 		} catch (Exception e) {
 			e.printStackTrace();

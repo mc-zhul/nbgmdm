@@ -1,11 +1,8 @@
 package com.hzmc.nbgsyn.service.impl;
 
 import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -20,7 +17,6 @@ import org.mule.module.http.internal.ParameterMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.JsonObject;
 import com.hzmc.nbgsyn.business.RegisterManager;
 import com.hzmc.nbgsyn.domain.persistence.RegisterBean;
 import com.hzmc.nbgsyn.service.CallService;
@@ -140,30 +136,31 @@ public class CallServiceImpl implements CallService {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public JSONObject toTalend(String rt, String type, String model, String cluster, String data) {
-		//生成entity
+	public JSONObject toTalend(String rt, String type, String model,
+			String cluster, String data) {
+		// 生成entity
 		Element root = DocumentHelper.createElement(rt);
 		Document document = DocumentHelper.createDocument(root);
-//		JSONArray ja = JSONArray.fromObject(data);
-//		try {
-//			Collection<?> joList = JSONArray.toCollection(ja);
-//			Object[] oList = joList.toArray();
-//			System.out.println(oList.length);
-//			for(Object o :oList){
-//				
-//				JSONObject jo = JSONObject.fromObject(o);
-//				Iterator it = jo.keys();
-//				while (it.hasNext()) {
-//					String k = it.next().toString();
-//					root.addElement(k).addText(jo.getString(k));
-//				}
-//				System.out.println(o);
-//			}
-//				
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-		
+		// JSONArray ja = JSONArray.fromObject(data);
+		// try {
+		// Collection<?> joList = JSONArray.toCollection(ja);
+		// Object[] oList = joList.toArray();
+		// System.out.println(oList.length);
+		// for(Object o :oList){
+		//
+		// JSONObject jo = JSONObject.fromObject(o);
+		// Iterator it = jo.keys();
+		// while (it.hasNext()) {
+		// String k = it.next().toString();
+		// root.addElement(k).addText(jo.getString(k));
+		// }
+		// System.out.println(o);
+		// }
+		//
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+
 		JSONObject jo = JSONObject.fromObject(data);
 		Iterator it = jo.keys();
 		while (it.hasNext()) {
