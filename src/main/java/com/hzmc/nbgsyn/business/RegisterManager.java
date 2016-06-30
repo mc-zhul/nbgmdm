@@ -48,4 +48,6 @@ public interface RegisterManager {
 	 * @return
 	 */
 	public List<RegisterBean> registerList(RegisterBean registerBean);
+	
+	
 }

@@ -3,6 +3,8 @@ package main.java;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import net.sf.json.JSONObject;
+
 import com.hzmc.nbgsyn.web.CrudCall;
 import com.hzmc.nbgsyn.web.TransCall;
 
@@ -19,5 +21,8 @@ public class Test {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String str = "{\"action\":\"SERVICE_REGISTER\",\"token\":\"token\",\"type \":\"C\",\"applyData\":[{\"MD_CODE\":\" 346\", \"SYS_CODE\":\" PORT5\", \"INTERFACE_CODE\":\"MD_LINE_SHIPLINE\",\"SERVICE_URL\":\"172.16.2.15:8080/MDM/SEVC\",\" username\":\"port5\",\"password\":\"123\"}]}";
+		
+		JSONObject jo = JSONObject.fromObject(str);
 	}
 }
