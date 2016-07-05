@@ -19,19 +19,26 @@ public class ApplyDate implements Serializable {
 	 * 
 	 */
 
+	// 动作 register 和 transt
 	private String action;
-
+	// 模块
 	private String model;
-
+	// 类型 R U D C
 	private String type;
-
+	// 验证用户名
 	private String username;
-
+	// 密码
 	private String password;
-
+	// Data model的entity名称
 	private String entity;
-
+	// 数据块
 	private JSONArray data;
+
+	// 用于查找
+	// 从第几条开始查找
+	private Integer index;
+	// 查找记录数
+	private Integer pagesize;
 
 	public String getAction() {
 		return action;
@@ -87,6 +94,22 @@ public class ApplyDate implements Serializable {
 
 	public void setData(JSONArray data) {
 		this.data = data;
+	}
+
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+
+	public Integer getPagesize() {
+		return pagesize;
+	}
+
+	public void setPagesize(Integer pagesize) {
+		this.pagesize = pagesize;
 	}
 
 }

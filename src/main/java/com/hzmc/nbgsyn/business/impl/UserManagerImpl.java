@@ -19,7 +19,8 @@ public class UserManagerImpl implements IUserManager {
 	public Boolean validateUser(String username, String userPassword) {
 		// TODO Auto-generated method stub
 		Boolean res = false;
-		// 验证用户 未完成 在缓存中验证
+		// 验证用户 未完成 在缓存中验证  这个是接口认证用户 和其他不同
+		// 模拟通过
 		if (username.equals("ctf"))
 			res = true;
 		return res;
@@ -32,11 +33,13 @@ public class UserManagerImpl implements IUserManager {
 		String sys_code = userInfoBean.getSYS_CODE();
 		String entity_code = userInfoBean.getENTITY_CODE();
 
+		// 模拟已注册场景
 		if ("A".equals(md_code) && "B".equals(sys_code) && "C".equals(entity_code)) {
 			throw new UserInfoException("md_code:" + md_code + ",sys_code:" + sys_code + ",entity_code" + entity_code
 					+ "已注册！");
 		}
 		// 添加用户
+		// saveUser(userInfoBean)
 	}
 
 	@Override
@@ -50,6 +53,7 @@ public class UserManagerImpl implements IUserManager {
 			throw new UserInfoException("md_code:" + md_code + ",sys_code:" + sys_code + ",entity_code" + entity_code
 					+ "找不到用户信息！");
 		// 删除用户
+		// removeUser(userInfoBean)
 	}
 
 	/**
@@ -62,6 +66,7 @@ public class UserManagerImpl implements IUserManager {
 		// TODO Auto-generated method stub
 		// 查找用户
 		UserInfoBean temp = null;
+		// temp = findUser(temp);
 		return temp;
 	}
 
@@ -76,6 +81,7 @@ public class UserManagerImpl implements IUserManager {
 			throw new UserInfoException("md_code:" + md_code + ",sys_code:" + sys_code + ",entity_code" + entity_code
 					+ "找不到用户信息！");
 		// 更新
+		//modifyUser(userInfoBean)
 	}
 
 }

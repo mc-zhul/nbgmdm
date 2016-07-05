@@ -1,9 +1,12 @@
 package com.hzmc.nbgsyn.service;
 
 
+import net.sf.json.JSONObject;
+
 import org.mule.api.MuleEventContext;
 
-import net.sf.json.JSONObject;
+import com.hzmc.nbgsyn.domain.persistence.ApplyDate;
+import com.hzmc.nbgsyn.domain.persistence.ResultBean;
 
 public interface CallService {
 	
@@ -44,8 +47,15 @@ public interface CallService {
 
 	/**
 	 * 下发
-	 * @param jsonstr
+	 * @param ApplyDate
 	 * @return
 	 */
-	public JSONObject transData(String jsonstr);
+	public JSONObject transData(ApplyDate applyDate);
+	
+	/**
+	 * 调用talend同步
+	 * @param applyDate
+	 * @return
+	 */
+	public ResultBean saveToTalend(ApplyDate applyDate);
 }

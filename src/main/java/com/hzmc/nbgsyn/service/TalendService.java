@@ -1,15 +1,40 @@
 package com.hzmc.nbgsyn.service;
 
-import net.sf.json.JSONObject;
+import com.hzmc.nbgsyn.domain.persistence.ApplyDate;
+import com.hzmc.nbgsyn.domain.persistence.ResultBean;
 
 public interface TalendService {
-	
+
 	/**
-	 * 调talend
-	 * @param Map
+	 * 保存数据
+	 * 
+	 * @param applyDate
 	 * @return
 	 */
-	public JSONObject talendWS(String type, String model,String cluster,String xmls);
+	public ResultBean saveApplyDate(ApplyDate applyDate);
 
-	
+	/**
+	 * 删除数据
+	 * 
+	 * @param applyDate
+	 * @return
+	 */
+	public ResultBean removeApplyDate(ApplyDate applyDate);
+
+	/**
+	 * 更新数据
+	 * 
+	 * @param applyDate
+	 * @return
+	 */
+	public ResultBean updateApplyDate(ApplyDate applyDate);
+
+	/**
+	 * 查找数据
+	 * 
+	 * @param applyDate
+	 * @return
+	 */
+	public ResultBean findApplyDate(ApplyDate applyDate);
+
 }

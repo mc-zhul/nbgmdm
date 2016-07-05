@@ -1,35 +1,17 @@
 package main.java;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.hzmc.nbgsyn.domain.persistence.ApplyDate;
 
 import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-import net.sf.json.JsonConfig;
-
-import com.hzmc.nbgsyn.domain.persistence.UserInfoBean;
 
 public class Mytest {
 
 	public static void main(String[] args) {
-		String str = "";
-		List<UserInfoBean> userInfos = new ArrayList<UserInfoBean>();
-		for (int i = 0; i < 2; i++) {
-			UserInfoBean temp = new UserInfoBean();
-			temp.setUsername("haha");
-			userInfos.add(temp);
-		}
-		JSONObject jo = new JSONObject();
-		jo.element("userInfos", userInfos);
-		str = jo.toString();
-		System.out.println(str);
-		JSONObject joo = JSONObject.fromObject(str);
-		System.out.println(joo);
-		JsonConfig config = new JsonConfig();
-		config.setRootClass(UserInfoBean.class);
-		List<UserInfoBean> userInfoList = (ArrayList<UserInfoBean>) JSONSerializer.toJava(joo.getJSONArray("userInfos"),
-				config);
-		System.out.println(userInfoList);
-		
+		String s = "{\"action\":\" SERVICE_REGISTER\",\"username\":\"username\",\"password\":\"password\",\"type \":\"C\",\"data\":[{\"MD_CODE\":\"NBG_MDM\", \"SYS_CODE\":\" PORT5\", \"ENTITY_CODE\":\"MD_LINE_SHIPLINE\",\"SERVICE_NAME\":\"sysn\",\"username\":\"port5\",\"password\":\"123\"}]}";
+		System.out.println(s);
+		JSONObject jo = JSONObject.fromObject(s);
+		System.out.println(jo);
+		ApplyDate applyDate = (ApplyDate) JSONObject.toBean(jo, ApplyDate.class);
+		System.out.println("aaa");
 	}
 }

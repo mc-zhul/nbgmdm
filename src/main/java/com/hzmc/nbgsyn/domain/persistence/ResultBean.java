@@ -1,6 +1,7 @@
 package com.hzmc.nbgsyn.domain.persistence;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class ResultBean implements Serializable {
 	/**
@@ -9,7 +10,17 @@ public class ResultBean implements Serializable {
 	private static final long serialVersionUID = -8605566028940170996L;
 	private String msgId;
 	private String msgDesc;
-	private String result;
+	private HashMap<String, Object> result = new HashMap<String, Object>();
+
+	public ResultBean() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public ResultBean(String msgId, String msgDesc) {
+		super();
+		this.msgId = msgId;
+		this.msgDesc = msgDesc;
+	}
 
 	public String getMsgId() {
 		return msgId;
@@ -27,17 +38,12 @@ public class ResultBean implements Serializable {
 		this.msgDesc = msgDesc;
 	}
 
-	public String getResult() {
+	public HashMap<String, Object> getResult() {
 		return result;
 	}
 
-	public void setResult(String result) {
+	public void setResult(HashMap<String, Object> result) {
 		this.result = result;
-	}
-
-	public void appendResult(String result) {
-		this.result = this.result == null ? "" : this.result;
-		this.result += result;
 	}
 
 }

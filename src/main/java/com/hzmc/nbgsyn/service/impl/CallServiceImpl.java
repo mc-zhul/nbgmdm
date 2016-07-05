@@ -1,8 +1,8 @@
 package com.hzmc.nbgsyn.service.impl;
 
-import java.net.URLEncoder;
 import java.util.Iterator;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hzmc.nbgsyn.business.RegisterManager;
+import com.hzmc.nbgsyn.domain.persistence.ApplyDate;
 import com.hzmc.nbgsyn.domain.persistence.RegisterBean;
+import com.hzmc.nbgsyn.domain.persistence.ResultBean;
 import com.hzmc.nbgsyn.service.CallService;
 import com.hzmc.nbgsyn.service.LogService;
 import com.hzmc.nbgsyn.service.TalendService;
@@ -33,8 +35,7 @@ public class CallServiceImpl implements CallService {
 	private LogService logservice;
 	@Autowired
 	private TalendService talendService;
-	private static final Logger logger = Logger
-			.getLogger(CallServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CallServiceImpl.class);
 
 	// private static SimpleDateFormat sFormat = new
 	// SimpleDateFormat("yyyyMMddHHmmss");
@@ -56,17 +57,17 @@ public class CallServiceImpl implements CallService {
 		rb.setUsername(data.getString("username"));
 		rb.setPassword(data.getString("password"));
 		switch (type) {
-		case "C":
-			registerManager.registerC(rb);
-			break;
-		case "D":
-			registerManager.registerD(rb);
-			break;
-		case "U":
-			registerManager.registerU(rb);
-			break;
-		default:
-			break;
+			case "C":
+				registerManager.registerC(rb);
+				break;
+			case "D":
+				registerManager.registerD(rb);
+				break;
+			case "U":
+				registerManager.registerU(rb);
+				break;
+			default:
+				break;
 		}
 
 		return reJson;
@@ -92,7 +93,7 @@ public class CallServiceImpl implements CallService {
 		String type = String.valueOf(jo.get("type"));
 		String root = String.valueOf(jo.get("root"));
 		JSONObject j = null;
-		j = toTalend(root, type, operand, operand, data);
+//		j = toTalend(root, type, operand, operand, data);
 		// dbCall(eventContext);
 		//
 		// RegisterBean rb = new RegisterBean();
@@ -131,15 +132,27 @@ public class CallServiceImpl implements CallService {
 		DataSyncManager dsm = new DataSyncManager();
 		// 
 		String r = dsm.dataSync(str);
-
 		return JSONObject.fromObject(r);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public JSONObject toTalend(String rt, String type, String model,
-			String cluster, String data) {
+	/**
+	 * 
+	 * @param entity
+	 *            entity(ex：RD_NATIONALITY)
+	 * @param type
+	 *            CRUD
+	 * @param model
+	 *            MDM_NBG
+	 * @param cluster
+	 *            和model一样 null时取model值
+	 * @param data
+	 *            数据值
+	 * @return
+	 */
+	private JSONObject toTalend(String entity, String type, String model, String cluster, JSONArray dataArray) {
+		cluster = cluster == null ? model : cluster;
 		// 生成entity
-		Element root = DocumentHelper.createElement(rt);
+		Element root = DocumentHelper.createElement(entity);
 		Document document = DocumentHelper.createDocument(root);
 		// JSONArray ja = JSONArray.fromObject(data);
 		// try {
@@ -161,7 +174,8 @@ public class CallServiceImpl implements CallService {
 		// e.printStackTrace();
 		// }
 
-		JSONObject jo = JSONObject.fromObject(data);
+		// 改成ja 遍历
+		JSONObject jo = JSONObject.fromObject(dataArray);
 		Iterator it = jo.keys();
 		while (it.hasNext()) {
 			String k = it.next().toString();
@@ -170,33 +184,31 @@ public class CallServiceImpl implements CallService {
 		String text = document.getRootElement().asXML();
 		JSONObject j = new JSONObject();
 		if ("U".equals(type)) {
-			j = talendService.talendWS(type, model, cluster, text);
+//			 talendService.talendSaveOrUpdateWS(type, model, cluster, text);
 		} else if ("C".equals(type)) {
-			j = talendService.talendWS(type, model, cluster, text);
+//			j = talendService.talendWS(type, model, cluster, text);
 		}
-		logger.info("talend 同步数据，model：" + model + "操作类型：" + type + ",data:"
-				+ data);
+		logger.info("talend 同步数据，model：" + model + "操作类型：" + type + ",data:" + dataArray.toString());
 		return j;
 	}
 
 	@Override
-	public JSONObject talendCall(String type, String model, String cluster,
-			String xmls) {
+	public JSONObject talendCall(String type, String model, String cluster, String xmls) {
 		return null;
 	}
 
 	@Override
-	public JSONObject transData(String jsonstr) {
+	public JSONObject transData(ApplyDate applyDate) {
 		String serviceUrl = "http://localhost:8082/nbgsyn/trans";
 		GetMethod method = null;
 		try {
 			String url = "/nbgsyn/trans";
 			String host = "127.0.0.1";
-			jsonstr = URLEncoder.encode(jsonstr, "utf-8");
-			String param = "jsonstr=" + jsonstr;
+			// jsonstr = URLEncoder.encode(jsonstr, "utf-8");
+			// String param = "jsonstr=" + jsonstr;
 			HttpClient httpClient = new HttpClient();
 			httpClient.getHostConfiguration().setHost(host, 8082, "http");
-			method = new GetMethod(url + "?" + param);
+			// method = new GetMethod(url + "?" + param);
 			httpClient.executeMethod(method);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -204,6 +216,15 @@ public class CallServiceImpl implements CallService {
 			method.releaseConnection();
 		}
 
+		return null;
+	}
+
+	/**
+	 * 保存数据到talend
+	 */
+	@Override
+	public ResultBean saveToTalend(ApplyDate applyDate) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }
