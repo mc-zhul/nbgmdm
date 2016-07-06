@@ -1,10 +1,12 @@
 package com.hzmc.nbgsyn.service;
 
+import com.hzmc.nbgsyn.business.exception.TalendException;
 import com.hzmc.nbgsyn.domain.persistence.ApplyDate;
 import com.hzmc.nbgsyn.domain.persistence.ResultBean;
 
 public interface TalendService {
 
+	public String talendSaveOrUpdateWS(String type, String model, String cluster, String xmls) throws TalendException;
 	/**
 	 * 保存数据
 	 * 

@@ -11,19 +11,13 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <spring:beans>
         <spring:import resource="applicationContext.xml" />
         <spring:import resource="applicationContext-business.xml" />
-        <spring:bean id="TokenCall" name="TokenCall" class="com.hzmc.nbgsyn.web.TokenCall" />
-        <spring:bean id="CrudCall" name="CrudCall" class="com.hzmc.nbgsyn.web.CrudCall" />
         <spring:bean id="TransCall" name="TransCall" class="com.hzmc.nbgsyn.web.TransCall" />
         <spring:bean id="ediEsbService" name="ediEsbService" class="com.hzmc.nbgsyn.webservice.impl.EdiEsbServiceImpl"/>
     </spring:beans>
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8082" doc:name="HTTP Listener Configuration" />
     <apikit:config name="nbg_mdm_esb-config" raml="nbgMdmSyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router" >
-        <apikit:flow-mapping resource="/crud" action="get" flow-ref="getAndPost:/crud:nbg_mdm_esb-config"/>
-        <apikit:flow-mapping resource="/crud" action="post" flow-ref="getAndPost:/crud:nbg_mdm_esb-config"/>
         <apikit:flow-mapping resource="/trans" action="get" flow-ref="getAndPost:/trans:nbg_mdm_esb-config"/>
         <apikit:flow-mapping resource="/trans" action="post" flow-ref="getAndPost:/trans:nbg_mdm_esb-config"/>
-        <apikit:flow-mapping resource="/token" action="get" flow-ref="getAndPost:/token:nbg_mdm_esb-config"/>
-        <apikit:flow-mapping resource="/token" action="post" flow-ref="getAndPost:/token:nbg_mdm_esb-config"/>
     </apikit:config>
     <apikit:config name="Router" raml="nbgMdmSyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
     <apikit:mapping-exception-strategy name="nbgsynMapping_Exception_Strategy">
@@ -36,31 +30,20 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <flow name="nbgsynFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/nbgsyn/v1.0/*" doc:name="HTTP" />
         <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload" />
-        <custom-filter class="com.hzmc.nbgsyn.util.CheckUserFilter" doc:name="CustomFilter" />
+
         <apikit:router config-ref="nbg_mdm_esb-config" doc:name="APIkit Router" />
         <exception-strategy ref="nbgsynMapping_Exception_Strategy" doc:name="Reference Exception Strategy" />
     </flow>
-    <flow name="getAndPost:/crud:nbg_mdm_esb-config">
-        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload" />
-        <component doc:name="Java">
-            <spring-object bean="CrudCall" />
-        </component>
-    </flow>
+
     <flow name="getAndPost:/trans:nbg_mdm_esb-config">
         <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload" />
         <component doc:name="Java">
             <spring-object bean="TransCall" />
         </component>
     </flow>
-    <flow name="getAndPost:/token:nbg_mdm_esb-config">
-        <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload"/>
-        <component doc:name="Java">
-            <spring-object bean="TokenCall"/>
-        </component>
-    </flow>
     <flow name="EDIESBService">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/EDIESBService/v1.0" doc:name="HTTP"/>
-        <cxf:jaxws-service serviceClass="com.hzmc.nbgsyn.webservice.EdiEsbService" doc:name="CXF"/>
+        <cxf:jaxws-service serviceClass="com.hzmc.nbgsyn.webservice.EdiEsbService" doc:name="CXF" enableMuleSoapHeaders="false"/>
         <component  doc:name="Java">
             <spring-object bean="ediEsbService"/>
         </component>

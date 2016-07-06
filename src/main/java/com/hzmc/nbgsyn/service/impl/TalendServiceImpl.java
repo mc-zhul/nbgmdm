@@ -58,6 +58,7 @@ public class TalendServiceImpl implements TalendService {
 	 * @throws TalendException
 	 */
 	public String talendSaveOrUpdateWS(String type, String model, String cluster, String xmls) throws TalendException {
+//		TalendWs.method1();
 		type = "C";
 		model = "MDM_NBG";
 		cluster = model;
@@ -69,10 +70,16 @@ public class TalendServiceImpl implements TalendService {
 			TMDMService_Service tws = new TMDMService_Service();
 			TMDMService port = tws.getTMDMPort();
 			BindingProvider bp = (BindingProvider) port;
-
 			bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "administrator");
 			bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "administrator");
 			bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, S_URL);
+
+			String username = "administrator";
+			String password = "administrator";
+
+			NtlmAuthenticator authenticator = new NtlmAuthenticator(username, password);
+			authenticator.setDefault(authenticator);
+
 			WSPutItem item = new WSPutItem();
 			WSDataModelPK dp = new WSDataModelPK();
 			WSDataClusterPK dc = new WSDataClusterPK();

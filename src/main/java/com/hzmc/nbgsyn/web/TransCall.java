@@ -8,13 +8,10 @@ import org.mule.api.MuleEventContext;
 import org.mule.api.MuleMessage;
 import org.mule.api.lifecycle.Callable;
 import org.mule.module.http.internal.ParameterMap;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hzmc.nbgsyn.business.enums.MsgEnum;
 import com.hzmc.nbgsyn.domain.persistence.ApplyDate;
 import com.hzmc.nbgsyn.domain.persistence.ResultBean;
-import com.hzmc.nbgsyn.service.CallService;
-import com.hzmc.nbgsyn.service.ReceiveService;
 
 /**
  * 主数据输到其他业务系统的入口
@@ -23,11 +20,6 @@ import com.hzmc.nbgsyn.service.ReceiveService;
  *
  */
 public class TransCall implements Callable {
-
-	@Autowired
-	private ReceiveService receiveService;
-	@Autowired
-	private CallService callService;
 
 	// oncall 的restFull 请求
 	@Override
@@ -38,7 +30,6 @@ public class TransCall implements Callable {
 		String jsonstr = map.get("jsonstr").trim();
 
 		JSONObject jo = JSONObject.fromObject(jsonstr);
-
 		ApplyDate applyDate = (ApplyDate) JSONObject.toBean(jo, ApplyDate.class);
 
 		String action = applyDate.getAction();
@@ -50,7 +41,7 @@ public class TransCall implements Callable {
 		if (StringUtils.isEmpty(action)) {
 			resultBean.setMsgId(MsgEnum.PARAM_ERROR.getMsgId());
 			resultBean.setMsgId(MsgEnum.PARAM_ERROR.getMsgDesc());
-//			resultBean.setResult("applyDate's action is null!");
+			// resultBean.setResult("applyDate's action is null!");
 			return JSONObject.fromObject(resultBean);
 		}
 
@@ -58,7 +49,7 @@ public class TransCall implements Callable {
 		ApplyDate temp = (ApplyDate) BeanUtils.cloneBean(applyDate);
 		temp.setAction("TRANSFOR");
 		switch (action) {
-			case "SYN": // ctos等业务部门同步
+			case "SYN": // ctos等业务部门同步 // 下发
 				String type = applyDate.getType();
 				switch (type) {
 					case "UPDATE":
@@ -71,10 +62,6 @@ public class TransCall implements Callable {
 						temp.setType("D");
 						break;
 				}
-				callService.transData(temp);
-				break;
-			case "TRANSFOR": // 主数据同步
-				receiveService.daoSyn(applyDate.getData().toString());
 				break;
 			default:
 				break;

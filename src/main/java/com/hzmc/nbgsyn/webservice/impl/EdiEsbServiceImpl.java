@@ -1,13 +1,12 @@
 package com.hzmc.nbgsyn.webservice.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import javax.jws.WebService;
 
+import main.java.TalendWs;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -18,12 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hzmc.nbgsyn.business.IUserManager;
 import com.hzmc.nbgsyn.business.enums.MsgEnum;
+import com.hzmc.nbgsyn.business.exception.TalendException;
 import com.hzmc.nbgsyn.business.exception.UserInfoException;
 import com.hzmc.nbgsyn.domain.persistence.ApplyDate;
 import com.hzmc.nbgsyn.domain.persistence.ResultBean;
 import com.hzmc.nbgsyn.domain.persistence.ResultInfo;
 import com.hzmc.nbgsyn.domain.persistence.UserInfoBean;
-import com.hzmc.nbgsyn.service.CallService;
 import com.hzmc.nbgsyn.service.TalendService;
 import com.hzmc.nbgsyn.webservice.EdiEsbService;
 
@@ -39,9 +38,6 @@ public class EdiEsbServiceImpl implements EdiEsbService {
 	private IUserManager userManager;
 
 	@Autowired
-	private CallService callService;
-
-	@Autowired
 	private TalendService talendService;
 
 	private String SUCCESS = "success";
@@ -54,6 +50,15 @@ public class EdiEsbServiceImpl implements EdiEsbService {
 	public String callEDIESBPub(String fromNode, String toNode, String esbID, String applyDataStr, String userID,
 			String password) {
 		// TODO Auto-generated method stub
+
+		try {
+			TalendWs.method1();
+			talendService.talendSaveOrUpdateWS(null, null, null, null);
+		} catch (TalendException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		ResultBean resultBean = new ResultBean();
 		resultBean.setMsgId(MsgEnum.SUCCESS.getMsgId());
 		resultBean.setMsgDesc(MsgEnum.SUCCESS.getMsgDesc());

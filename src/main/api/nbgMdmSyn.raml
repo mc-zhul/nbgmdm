@@ -2,38 +2,6 @@
 title: nbg_mdm_esb API
 version: v1.0
 baseUri: http://nbgsynMdm/api/v1.0
-/token:
-  displayName: getToken
-  post:
-    description: get method to get token
-    queryParameters:
-      jsonstr:
-        type: string
-        required: true
-        description: input jsonstr
-        example: |
-          {"operand":" token", "type ":"R","applyData":{"username":" username"," password":" password"} }          
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              { "msgID":"000","msgDesc":"操作成功","result":""}
-  get:
-    description: post method to get token
-    queryParameters:
-      jsonstr:
-        type: string
-        required: true
-        description: input jsonstr
-        example: |
-          {"operand":" token", "type ":"R","applyData":{"username":" username"," password":" password"} }          
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              { "msgID":"000","msgDesc":"操作成功","result":""}
 /trans:
   displayName: talend use it to synchronize data
   get:
@@ -62,38 +30,6 @@ baseUri: http://nbgsynMdm/api/v1.0
           {"action":"TRANSFOR","operand":"MD_LOCATION_PORT","token":"token","type":"C","applyData":[{"PORT_ID":"346","PORT_CODE":"LTD","PORT_ENAME":"DUTCHHARBOUR","PORT_CNAME":"鹿特丹","PORT_COUNTRY_CODE":"NL","PORT_ACTIVE_FLAG":"Y","PORT_CN_FLAG":"XF"}]}
     responses: 
        200:
-        body:
-          application/json:
-            example: |
-              { "msgID":"000","msgDesc":"操作成功","result":""}
-/crud:
-  displayName: access main data server,register interface main data server
-  get:
-    description: get method to crud
-    queryParameters:
-      jsonstr:
-        type: string
-        required: true
-        description: input jsonstr
-        example: |
-          {"action":"SERVICE_REGISTER","token":"token","type":"C","applyData":[{"MD_CODE":"346", "SYS_CODE":"PORT5", "INTERFACE_CODE":"MD_LINE_SHIPLINE","SERVICE_URL":"172.16.2.15:8080/MDM/SEVC","username":"port5","password":"123"}]}
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              { "msgID":"000","msgDesc":"操作成功","result":""}
-  post:
-    description: post method to crud
-    queryParameters:
-      jsonstr:
-        type: string
-        required: true
-        description: input jsonstr
-        example: |
-          {"action":"SERVICE_REGISTER", "token":"token","type ":"C","applyData":[{"MD_CODE":" 346", "SYS_CODE":" PORT5", "INTERFACE_CODE":"MD_LINE_SHIPLINE","SERVICE_URL":"172.16.2.15:8080/MDM/SEVC"," username":"port5","password":"123"}]}
-    responses:
-      200:
         body:
           application/json:
             example: |
