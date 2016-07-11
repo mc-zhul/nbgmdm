@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.6.1" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
+<mule xmlns:https="http://www.mulesoft.org/schema/mule/https"
+	xmlns:ws="http://www.mulesoft.org/schema/mule/ws" xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.6.1" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
@@ -7,7 +9,8 @@ http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd">
     <spring:beans>
         <spring:import resource="applicationContext.xml" />
         <spring:import resource="applicationContext-business.xml" />
@@ -20,6 +23,15 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
         <apikit:flow-mapping resource="/trans" action="post" flow-ref="getAndPost:/trans:nbg_mdm_esb-config"/>
     </apikit:config>
     <apikit:config name="Router" raml="nbgMdmSyn.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
+    <ws:consumer-config name="Web_Service_talend" wsdlLocation="http://127.0.0.1:8080/talendmdm/services/soap?wsdl" service="TMDMService" port="TMDMPort" serviceAddress="http://127.0.0.1:8080/talendmdm/services/soap" doc:name="Web Service Consumer">
+        <ws:security>
+            <ws:wss-username-token username="administrator" password="administrator" passwordType="TEXT" addCreated="true"/>
+        </ws:security>
+    </ws:consumer-config>
+
+    <https:connector name="httpsNoSessionConnector" doc:name="HTTP-HTTPS">
+		<service-overrides sessionHandler="org.mule.session.NullSessionHandler" />
+	</https:connector>
     <apikit:mapping-exception-strategy name="nbgsynMapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
@@ -34,7 +46,6 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
         <apikit:router config-ref="nbg_mdm_esb-config" doc:name="APIkit Router" />
         <exception-strategy ref="nbgsynMapping_Exception_Strategy" doc:name="Reference Exception Strategy" />
     </flow>
-
     <flow name="getAndPost:/trans:nbg_mdm_esb-config">
         <set-payload value="#[message.inboundProperties.'http.query.params']" doc:name="Set Payload" />
         <component doc:name="Java">
@@ -42,11 +53,15 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
         </component>
     </flow>
     <flow name="EDIESBService">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/EDIESBService/v1.0" doc:name="HTTP"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/EDIESBService/v1.0" doc:name="HTTP">
+            <http:response-builder>
+                <http:header headerName="Username" value="administrator"/>
+                <http:header headerName="Password" value="administrator"/>
+            </http:response-builder>
+    </http:listener>
         <cxf:jaxws-service serviceClass="com.hzmc.nbgsyn.webservice.EdiEsbService" doc:name="CXF" enableMuleSoapHeaders="false"/>
         <component  doc:name="Java">
             <spring-object bean="ediEsbService"/>
         </component>
     </flow>
-	
 </mule>

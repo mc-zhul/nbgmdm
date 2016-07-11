@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.jws.WebService;
 
+import main.java.CharTest;
 import main.java.TalendWs;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -50,8 +51,9 @@ public class EdiEsbServiceImpl implements EdiEsbService {
 	public String callEDIESBPub(String fromNode, String toNode, String esbID, String applyDataStr, String userID,
 			String password) {
 		// TODO Auto-generated method stub
-
+		System.out.println("here");
 		try {
+			CharTest.method1();
 			TalendWs.method1();
 			talendService.talendSaveOrUpdateWS(null, null, null, null);
 		} catch (TalendException e1) {
@@ -74,6 +76,12 @@ public class EdiEsbServiceImpl implements EdiEsbService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			logger.error(e);
+			resultBean.setMsgId(MsgEnum.FORMART_ERROR.getMsgId());
+			resultBean.setMsgDesc(MsgEnum.FORMART_ERROR.getMsgDesc());
+			return JSONObject.fromObject(resultBean).toString();
+		}
+
+		if (applyDate == null) {
 			resultBean.setMsgId(MsgEnum.FORMART_ERROR.getMsgId());
 			resultBean.setMsgDesc(MsgEnum.FORMART_ERROR.getMsgDesc());
 			return JSONObject.fromObject(resultBean).toString();
@@ -203,4 +211,5 @@ public class EdiEsbServiceImpl implements EdiEsbService {
 		else
 			return MsgEnum.FAIL;
 	}
+
 }

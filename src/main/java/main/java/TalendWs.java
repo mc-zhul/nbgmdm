@@ -17,7 +17,7 @@ public class TalendWs {
 	}
 
 	public static void method1() {
-		final String S_URL = "http://169.169.171.148:8080/talendmdm/services/soap";
+		final String S_URL = "http://127.0.0.1:8080/talendmdm/services/soap";
 
 		try {
 			TMDMService_Service tws = new TMDMService_Service();
