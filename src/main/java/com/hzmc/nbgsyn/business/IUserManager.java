@@ -1,5 +1,7 @@
 package com.hzmc.nbgsyn.business;
 
+import java.util.List;
+
 import com.hzmc.nbgsyn.business.exception.UserInfoException;
 import com.hzmc.nbgsyn.domain.persistence.UserInfoBean;
 
@@ -18,6 +20,11 @@ public interface IUserManager {
 	 */
 	public Boolean validateUser(String username, String userPassword);
 
+	/**
+	 * 获取所有注册信息
+	 * @return
+	 */
+	public List<UserInfoBean> findAllUserInfo();
 	/**
 	 * 保存注册用户
 	 * 
